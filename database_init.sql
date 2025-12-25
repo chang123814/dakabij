@@ -149,14 +149,14 @@ CREATE TABLE IF NOT EXISTS statistics (
 -- 初始化数据
 -- ============================================
 
--- 插入默认笔记分类（可选）
-INSERT INTO note_categories (user_id, name, icon, color, sort_order) VALUES
-(0, '生活', 'life', '#FF6B6B', 1),
-(0, '工作', 'work', '#4ECDC4', 2),
-(0, '学习', 'study', '#45B7D1', 3),
-(0, '健康', 'health', '#96CEB4', 4),
-(0, '其他', 'other', '#FFEAA7', 5)
-ON DUPLICATE KEY UPDATE name=VALUES(name);
+-- 插入默认笔记分类（可选）- 需要先有用户记录
+-- INSERT INTO note_categories (user_id, name, icon, color, sort_order) VALUES
+-- (0, '生活', 'life', '#FF6B6B', 1),
+-- (0, '工作', 'work', '#4ECDC4', 2),
+-- (0, '学习', 'study', '#45B7D1', 3),
+-- (0, '健康', 'health', '#96CEB4', 4),
+-- (0, '其他', 'other', '#FFEAA7', 5)
+-- ON DUPLICATE KEY UPDATE name=VALUES(name);
 
 -- ============================================
 -- 验证表创建

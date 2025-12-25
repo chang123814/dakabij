@@ -13,6 +13,15 @@ const checkInRoutes = require('./routes/checkIn');
 const noteRoutes = require('./routes/notes');
 const statisticsRoutes = require('./routes/statistics');
 const wechatRoutes = require('./routes/wechat');
+const taskCategoriesRoutes = require('./routes/taskCategories');
+const materialCategoriesRoutes = require('./routes/materialCategories');
+const materialsRoutes = require('./routes/materials');
+const socialPlatformsRoutes = require('./routes/socialPlatforms');
+const contentPublishesRoutes = require('./routes/contentPublishes');
+const styleTestsRoutes = require('./routes/styleTests');
+const fanInteractionsRoutes = require('./routes/fanInteractions');
+const monetizationRoutes = require('./routes/monetization');
+const themePlansRoutes = require('./routes/themePlans');
 
 // 导入中间件
 const errorHandler = require('./middleware/errorHandler');
@@ -44,6 +53,15 @@ app.use('/api/checkin', checkInRoutes);
 app.use('/api/notes', noteRoutes);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/wechat', wechatRoutes);
+app.use('/api/task-categories', taskCategoriesRoutes);
+app.use('/api/material-categories', materialCategoriesRoutes);
+app.use('/api/materials', materialsRoutes);
+app.use('/api/social-platforms', socialPlatformsRoutes);
+app.use('/api/content-publishes', contentPublishesRoutes);
+app.use('/api/style-tests', styleTestsRoutes);
+app.use('/api/fan-interactions', fanInteractionsRoutes);
+app.use('/api/monetization', monetizationRoutes);
+app.use('/api/theme-plans', themePlansRoutes);
 
 // 404处理
 app.use((req, res) => {

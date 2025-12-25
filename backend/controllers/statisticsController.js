@@ -1,108 +1,329 @@
-// 统计控制器
 const { query } = require('../config/database');
 
-// 获取用户统计数据
-async function getUserStatistics(req, res, next) {
-  try {
-    const { userId } = req.params;
-    
-    // 获取习惯统计
-    const habitSql = `
-      SELECT 
-        COUNT(*) as total_habits,
-        SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active_habits
-      FROM habits WHERE user_id = ?
-    `;
-    const habitStats = await query(habitSql, [userId]);
-    
-    // 获取今日打卡数
-    const todaySql = `
-      SELECT COUNT(*) as today_checkins
-      FROM check_in_records
-      WHERE user_id = ? AND check_in_date = CURDATE()
-    `;
-    const todayStats = await query(todaySql, [userId]);
-    
-    // 获取总打卡数
-    const totalCheckInSql = `
-      SELECT COUNT(*) as total_checkins
-      FROM check_in_records
-      WHERE user_id = ?
-    `;
-    const totalCheckInStats = await query(totalCheckInSql, [userId]);
-    
-    // 获取笔记总数
-    const noteSql = 'SELECT COUNT(*) as total_notes FROM notes WHERE user_id = ?';
-    const noteStats = await query(noteSql, [userId]);
-    
-    res.json({
-      status: 'success',
-      data: {
-        total_habits: habitStats[0].total_habits || 0,
-        active_habits: habitStats[0].active_habits || 0,
-        today_checkins: todayStats[0].today_checkins || 0,
-        total_checkins: totalCheckInStats[0].total_checkins || 0,
-        total_notes: noteStats[0].total_notes || 0
-      }
-    });
-  } catch (error) {
-    next(error);
-  }
+async function getUserIdByOpenid(openid) {
+  const result = await query('SELECT id FROM users WHERE openid = ?', [openid]);
+  return result.length > 0 ? result[0].id : null;
 }
 
-// 获取日期范围统计数据
-async function getRangeStatistics(req, res, next) {
+async function getTaskStatistics(req, res, next) {
   try {
-    const { openid, start_date, end_date } = req.query;
+    const { openid, start_date, end_date, category_id } = req.query;
     
-    if (!openid || !start_date || !end_date) {
+    if (!openid) {
       return res.status(400).json({
         status: 'error',
-        message: '缺少必要参数'
+        message: '缺少openid参数'
       });
     }
     
-    // 获取用户ID
-    const userSql = 'SELECT id FROM users WHERE openid = ?';
-    const users = await query(userSql, [openid]);
+    const userId = await getUserIdByOpenid(openid);
     
-    if (users.length === 0) {
+    if (!userId) {
       return res.status(404).json({
         status: 'error',
         message: '用户不存在'
       });
     }
     
-    const userId = users[0].id;
+    let sql = 'SELECT status, COUNT(*) as count FROM tasks WHERE user_id = ?';
+    const params = [userId];
     
-    // 获取日期范围内的打卡统计
-    const sql = `
-      SELECT 
-        stat_date,
-        total_habits,
-        active_habits,
-        checked_in_count,
-        total_notes
-      FROM statistics
-      WHERE user_id = ? AND stat_date BETWEEN ? AND ?
-      ORDER BY stat_date ASC
-    `;
+    if (start_date) {
+      sql += ' AND created_at >= ?';
+      params.push(start_date);
+    }
     
-    const stats = await query(sql, [userId, start_date, end_date]);
+    if (end_date) {
+      sql += ' AND created_at <= ?';
+      params.push(end_date);
+    }
+    
+    if (category_id) {
+      sql += ' AND category_id = ?';
+      params.push(parseInt(category_id));
+    }
+    
+    sql += ' GROUP BY status';
+    
+    const stats = await query(sql, params);
+    
+    const result = {
+      total: 0,
+      completed: 0,
+      in_progress: 0,
+      pending: 0,
+      cancelled: 0
+    };
+    
+    stats.forEach(stat => {
+      result.total += stat.count;
+      if (stat.status === 2) result.completed = stat.count;
+      else if (stat.status === 1) result.in_progress = stat.count;
+      else if (stat.status === 0) result.pending = stat.count;
+      else if (stat.status === 3) result.cancelled = stat.count;
+    });
     
     res.json({
       status: 'success',
-      data: stats
+      data: result
     });
   } catch (error) {
     next(error);
   }
 }
 
-// 获取习惯统计数据
-async function getHabitStatistics(req, res, next) {
+async function getContentStatistics(req, res, next) {
   try {
-    const { habitId } = req.params;
+    const { openid, start_date, end_date, platform_name } = req.query;
+    
+    if (!openid) {
+      return res.status(400).json({
+        status: 'error',
+        message: '缺少openid参数'
+      });
+    }
+    
+    const userId = await getUserIdByOpenid(openid);
+    
+    if (!userId) {
+      return res.status(404).json({
+        status: 'error',
+        message: '用户不存在'
+      });
+    }
+    
+    let sql = `SELECT cp.status, COUNT(*) as count, 
+      SUM(cp.views) as total_views, 
+      SUM(cp.likes) as total_likes, 
+      SUM(cp.comments) as total_comments, 
+      SUM(cp.shares) as total_shares, 
+      SUM(cp.favorites) as total_favorites
+      FROM content_publishes cp 
+      LEFT JOIN social_platforms sp ON cp.platform_id = sp.id 
+      WHERE cp.user_id = ?`;
+    const params = [userId];
+    
+    if (start_date) {
+      sql += ' AND cp.created_at >= ?';
+      params.push(start_date);
+    }
+    
+    if (end_date) {
+      sql += ' AND cp.created_at <= ?';
+      params.push(end_date);
+    }
+    
+    if (platform_name) {
+      sql += ' AND sp.platform_name = ?';
+      params.push(platform_name);
+    }
+    
+    sql += ' GROUP BY cp.status';
+    
+    const stats = await query(sql, params);
+    
+    const result = {
+      total: 0,
+      published: 0,
+      draft: 0,
+      scheduled: 0,
+      total_views: 0,
+      total_likes: 0,
+      total_comments: 0,
+      total_shares: 0,
+      total_favorites: 0
+    };
+    
+    stats.forEach(stat => {
+      result.total += stat.count;
+      if (stat.status === 1) result.published = stat.count;
+      else if (stat.status === 0) result.draft = stat.count;
+      else if (stat.status === 2) result.scheduled = stat.count;
+      
+      result.total_views += stat.total_views || 0;
+      result.total_likes += stat.total_likes || 0;
+      result.total_comments += stat.total_comments || 0;
+      result.total_shares += stat.total_shares || 0;
+      result.total_favorites += stat.total_favorites || 0;
+    });
+    
+    res.json({
+      status: 'success',
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getFanInteractionStatistics(req, res, next) {
+  try {
+    const { openid, start_date, end_date, platform_name } = req.query;
+    
+    if (!openid) {
+      return res.status(400).json({
+        status: 'error',
+        message: '缺少openid参数'
+      });
+    }
+    
+    const userId = await getUserIdByOpenid(openid);
+    
+    if (!userId) {
+      return res.status(404).json({
+        status: 'error',
+        message: '用户不存在'
+      });
+    }
+    
+    let sql = `SELECT fi.interaction_type, COUNT(*) as count 
+      FROM fan_interactions fi 
+      LEFT JOIN social_platforms sp ON fi.platform_id = sp.id 
+      WHERE fi.user_id = ?`;
+    const params = [userId];
+    
+    if (start_date) {
+      sql += ' AND fi.created_at >= ?';
+      params.push(start_date);
+    }
+    
+    if (end_date) {
+      sql += ' AND fi.created_at <= ?';
+      params.push(end_date);
+    }
+    
+    if (platform_name) {
+      sql += ' AND sp.platform_name = ?';
+      params.push(platform_name);
+    }
+    
+    sql += ' GROUP BY fi.interaction_type';
+    
+    const stats = await query(sql, params);
+    
+    const result = {
+      total: 0,
+      comment: 0,
+      message: 0,
+      mention: 0,
+      like: 0
+    };
+    
+    stats.forEach(stat => {
+      result.total += stat.count;
+      if (stat.interaction_type === 'comment') result.comment = stat.count;
+      else if (stat.interaction_type === 'message') result.message = stat.count;
+      else if (stat.interaction_type === 'mention') result.mention = stat.count;
+      else if (stat.interaction_type === 'like') result.like = stat.count;
+    });
+    
+    res.json({
+      status: 'success',
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getMonetizationStatistics(req, res, next) {
+  try {
+    const { openid, start_date, end_date, plan_type } = req.query;
+    
+    if (!openid) {
+      return res.status(400).json({
+        status: 'error',
+        message: '缺少openid参数'
+      });
+    }
+    
+    const userId = await getUserIdByOpenid(openid);
+    
+    if (!userId) {
+      return res.status(404).json({
+        status: 'error',
+        message: '用户不存在'
+      });
+    }
+    
+    let sql = `SELECT mp.plan_type, 
+      COUNT(*) as plan_count,
+      SUM(mp.target_amount) as total_target,
+      SUM(mp.current_amount) as total_current,
+      (SELECT SUM(mr.amount) FROM monetization_records mr WHERE mr.user_id = ? AND mr.record_type = 'income'`;
+    const params = [userId];
+    
+    if (start_date) {
+      sql += ' AND mr.record_date >= ?';
+      params.push(start_date);
+    }
+    
+    if (end_date) {
+      sql += ' AND mr.record_date <= ?';
+      params.push(end_date);
+    }
+    
+    sql += `) as total_income,
+      (SELECT SUM(mr.amount) FROM monetization_records mr WHERE mr.user_id = ? AND mr.record_type = 'expense'`;
+    params.push(userId);
+    
+    if (start_date) {
+      sql += ' AND mr.record_date >= ?';
+      params.push(start_date);
+    }
+    
+    if (end_date) {
+      sql += ' AND mr.record_date <= ?';
+      params.push(end_date);
+    }
+    
+    sql += `) as total_expense
+      FROM monetization_plans mp WHERE mp.user_id = ?`;
+    params.push(userId);
+    
+    if (plan_type) {
+      sql += ' AND mp.plan_type = ?';
+      params.push(plan_type);
+    }
+    
+    sql += ' GROUP BY mp.plan_type';
+    
+    const stats = await query(sql, params);
+    
+    const result = {
+      total_plans: 0,
+      total_target: 0,
+      total_current: 0,
+      total_income: 0,
+      total_expense: 0,
+      by_type: {}
+    };
+    
+    stats.forEach(stat => {
+      result.total_plans += stat.plan_count;
+      result.total_target += stat.total_target || 0;
+      result.total_current += stat.total_current || 0;
+      result.total_income += stat.total_income || 0;
+      result.total_expense += stat.total_expense || 0;
+      
+      result.by_type[stat.plan_type] = {
+        plan_count: stat.plan_count,
+        total_target: stat.total_target || 0,
+        total_current: stat.total_current || 0
+      };
+    });
+    
+    res.json({
+      status: 'success',
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getDashboardOverview(req, res, next) {
+  try {
     const { openid } = req.query;
     
     if (!openid) {
@@ -112,120 +333,79 @@ async function getHabitStatistics(req, res, next) {
       });
     }
     
-    // 获取用户ID
-    const userSql = 'SELECT id FROM users WHERE openid = ?';
-    const users = await query(userSql, [openid]);
+    const userId = await getUserIdByOpenid(openid);
     
-    if (users.length === 0) {
+    if (!userId) {
       return res.status(404).json({
         status: 'error',
         message: '用户不存在'
       });
     }
     
-    const userId = users[0].id;
+    const today = new Date().toISOString().split('T')[0];
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     
-    // 获取总打卡次数
-    const totalSql = 'SELECT COUNT(*) as total FROM check_in_records WHERE habit_id = ? AND user_id = ?';
-    const totalResult = await query(totalSql, [habitId, userId]);
+    const [
+      taskStats,
+      contentStats,
+      interactionStats,
+      monetizationStats,
+      materialCount,
+      platformCount
+    ] = await Promise.all([
+      query('SELECT status, COUNT(*) as count FROM tasks WHERE user_id = ? AND created_at >= ? GROUP BY status', [userId, weekAgo]),
+      query(`SELECT cp.status, COUNT(*) as count, 
+        SUM(cp.views) as total_views, 
+        SUM(cp.likes) as total_likes 
+        FROM content_publishes cp 
+        WHERE cp.user_id = ? AND cp.created_at >= ? 
+        GROUP BY cp.status`, [userId, weekAgo]),
+      query('SELECT COUNT(*) as count FROM fan_interactions WHERE user_id = ? AND created_at >= ?', [userId, weekAgo]),
+      query(`SELECT 
+        (SELECT SUM(amount) FROM monetization_records WHERE user_id = ? AND record_type = 'income' AND record_date >= ?) as income,
+        (SELECT SUM(amount) FROM monetization_records WHERE user_id = ? AND record_type = 'expense' AND record_date >= ?) as expense`,
+        [userId, weekAgo, userId, weekAgo]),
+      query('SELECT COUNT(*) as count FROM materials WHERE user_id = ? AND status = 1', [userId]),
+      query('SELECT COUNT(*) as count FROM social_platforms WHERE user_id = ? AND status = 1', [userId])
+    ]);
     
-    // 获取本月打卡次数
-    const monthSql = `
-      SELECT COUNT(*) as month_count
-      FROM check_in_records
-      WHERE habit_id = ? AND user_id = ? 
-        AND YEAR(check_in_date) = YEAR(CURDATE())
-        AND MONTH(check_in_date) = MONTH(CURDATE())
-    `;
-    const monthResult = await query(monthSql, [habitId, userId]);
-    
-    // 获取连续打卡天数
-    const streakSql = `
-      SELECT 
-        COUNT(*) as streak
-      FROM (
-        SELECT 
-          check_in_date,
-          @rownum := @rownum + 1 as rownum,
-          DATEDIFF(check_in_date, @prev_date) as diff,
-          @prev_date := check_in_date
-        FROM check_in_records, (SELECT @rownum := 0, @prev_date := NULL) r
-        WHERE habit_id = ? AND user_id = ?
-        ORDER BY check_in_date DESC
-      ) t
-      WHERE diff = 1 OR rownum = 1
-    `;
-    const streakResult = await query(streakSql, [habitId, userId]);
-    
-    // 获取最近7天打卡情况
-    const recentSql = `
-      SELECT 
-        DATE(check_in_date) as date,
-        COUNT(*) as count
-      FROM check_in_records
-      WHERE habit_id = ? AND user_id = ? 
-        AND check_in_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-      GROUP BY DATE(check_in_date)
-      ORDER BY date DESC
-    `;
-    const recentResult = await query(recentSql, [habitId, userId]);
-    
-    res.json({
-      status: 'success',
-      data: {
-        total_checkins: totalResult[0].total || 0,
-        month_checkins: monthResult[0].month_count || 0,
-        current_streak: streakResult[0].streak || 0,
-        recent_checkins: recentResult
-      }
+    const taskResult = { total: 0, completed: 0, in_progress: 0 };
+    taskStats.forEach(stat => {
+      taskResult.total += stat.count;
+      if (stat.status === 2) taskResult.completed = stat.count;
+      else if (stat.status === 1) taskResult.in_progress = stat.count;
     });
-  } catch (error) {
-    next(error);
-  }
-}
-
-// 获取月度统计
-async function getMonthlyStatistics(req, res, next) {
-  try {
-    const { userId } = req.params;
-    const { year, month } = req.query;
     
-    const targetYear = year || new Date().getFullYear();
-    const targetMonth = month || new Date().getMonth() + 1;
+    const contentResult = { total: 0, published: 0, total_views: 0, total_likes: 0 };
+    contentStats.forEach(stat => {
+      contentResult.total += stat.count;
+      if (stat.status === 1) contentResult.published = stat.count;
+      contentResult.total_views += stat.total_views || 0;
+      contentResult.total_likes += stat.total_likes || 0;
+    });
     
-    // 获取该月每天的打卡统计
-    const sql = `
-      SELECT 
-        DAY(check_in_date) as day,
-        COUNT(*) as checkin_count
-      FROM check_in_records
-      WHERE user_id = ? 
-        AND YEAR(check_in_date) = ?
-        AND MONTH(check_in_date) = ?
-      GROUP BY DAY(check_in_date)
-      ORDER BY day ASC
-    `;
-    
-    const stats = await query(sql, [userId, targetYear, targetMonth]);
-    
-    // 获取该月总打卡数
-    const totalSql = `
-      SELECT COUNT(*) as total
-      FROM check_in_records
-      WHERE user_id = ? 
-        AND YEAR(check_in_date) = ?
-        AND MONTH(check_in_date) = ?
-    `;
-    const totalResult = await query(totalSql, [userId, targetYear, targetMonth]);
+    const result = {
+      tasks: taskResult,
+      content: contentResult,
+      interactions: {
+        total: interactionStats[0]?.count || 0
+      },
+      monetization: {
+        income: monetizationStats[0]?.income || 0,
+        expense: monetizationStats[0]?.expense || 0,
+        profit: (monetizationStats[0]?.income || 0) - (monetizationStats[0]?.expense || 0)
+      },
+      materials: {
+        total: materialCount[0]?.count || 0
+      },
+      platforms: {
+        total: platformCount[0]?.count || 0
+      }
+    };
     
     res.json({
       status: 'success',
-      data: {
-        year: targetYear,
-        month: targetMonth,
-        total_checkins: totalResult[0].total || 0,
-        daily_stats: stats
-      }
+      data: result
     });
   } catch (error) {
     next(error);
@@ -233,8 +413,9 @@ async function getMonthlyStatistics(req, res, next) {
 }
 
 module.exports = {
-  getUserStatistics,
-  getRangeStatistics,
-  getHabitStatistics,
-  getMonthlyStatistics
+  getTaskStatistics,
+  getContentStatistics,
+  getFanInteractionStatistics,
+  getMonetizationStatistics,
+  getDashboardOverview
 };
