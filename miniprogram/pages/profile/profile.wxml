@@ -1,0 +1,84 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="card user-card" wx:if="{{userInfo}}">
+    <view class="user-info">
+      <image class="avatar avatar-lg" src="{{userInfo.avatar_url || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="user-details">
+        <text class="user-name">{{userInfo.nickname || '未设置昵称'}}</text>
+        <text class="user-desc">{{userInfo.bio || '这个人很懒，什么都没写'}}</text>
+      </view>
+    </view>
+    <view class="user-stats">
+      <view class="stat-item">
+        <text class="stat-value">{{userInfo.total_habits || 0}}</text>
+        <text class="stat-label">习惯</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{userInfo.total_checkins || 0}}</text>
+        <text class="stat-label">打卡</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{userInfo.total_notes || 0}}</text>
+        <text class="stat-label">笔记</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 未登录状态 -->
+  <view class="card login-card" wx:else>
+    <view class="login-content">
+      <text class="login-icon">👤</text>
+      <text class="login-text">登录后体验更多功能</text>
+      <button class="btn-primary" bindtap="login">立即登录</button>
+    </view>
+  </view>
+
+  <!-- 设置列表 -->
+  <view class="card settings-list" wx:if="{{userInfo}}">
+    <view class="setting-item" bindtap="toggleNotification">
+      <view class="setting-info">
+        <text class="setting-icon">🔔</text>
+        <text class="setting-label">消息通知</text>
+      </view>
+      <switch checked="{{settings.notification}}" color="#4CAF50" />
+    </view>
+    <view class="setting-item" bindtap="toggleReminder">
+      <view class="setting-info">
+        <text class="setting-icon">⏰</text>
+        <text class="setting-label">打卡提醒</text>
+      </view>
+      <switch checked="{{settings.reminder}}" color="#4CAF50" />
+    </view>
+    <view class="setting-item" bindtap="toggleDarkMode">
+      <view class="setting-info">
+        <text class="setting-icon">🌙</text>
+        <text class="setting-label">深色模式</text>
+      </view>
+      <switch checked="{{settings.darkMode}}" color="#4CAF50" />
+    </view>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="card menu-list">
+    <view class="menu-item" bindtap="about">
+      <view class="menu-info">
+        <text class="menu-icon">ℹ️</text>
+        <text class="menu-label">关于</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="contact">
+      <view class="menu-info">
+        <text class="menu-icon">💬</text>
+        <text class="menu-label">联系客服</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section" wx:if="{{userInfo}}">
+    <button class="btn-logout" bindtap="logout">退出登录</button>
+  </view>
+</view>

@@ -1,0 +1,51 @@
+<!--pages/habits/habits.wxml-->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <text class="header-title">我的习惯</text>
+    <view class="header-actions">
+      <text class="header-date">{{currentDate}}</text>
+      <button class="btn-add" bindtap="createHabit" size="mini" type="primary">+ 新建</button>
+    </view>
+  </view>
+
+  <!-- 习惯列表 -->
+  <view class="habits-list" wx:if="{{habits.length > 0}}">
+    <view class="habit-item" wx:for="{{habits}}" wx:key="id" bindtap="viewHabit" data-id="{{item.id}}">
+      <view class="habit-icon">
+        <text class="icon">{{item.icon || '🎯'}}</text>
+      </view>
+      <view class="habit-info">
+        <view class="habit-header">
+          <text class="habit-name">{{item.name}}</text>
+          <view class="habit-status" wx:if="{{item.status === 1}}">
+            <text class="status-dot"></text>
+            <text class="status-text">进行中</text>
+          </view>
+          <view class="habit-status" wx:else>
+            <text class="status-dot inactive"></text>
+            <text class="status-text">已暂停</text>
+          </view>
+        </view>
+        <text class="habit-desc">{{item.description || '暂无描述'}}</text>
+        <view class="habit-stats">
+          <text class="stat-item">连续 {{item.streak_days || 0}} 天</text>
+          <text class="stat-item">累计 {{item.total_checkins || 0}} 次</text>
+        </view>
+      </view>
+      <view class="habit-action" catchtap="checkIn" data-id="{{item.id}}">
+        <button class="btn-check-in" size="mini" type="primary" wx:if="{{item.today_checked === false}}">打卡</button>
+        <view class="checked" wx:else>
+          <text class="checked-icon">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:else>
+    <text class="empty-icon">🎯</text>
+    <text class="empty-text">还没有创建习惯</text>
+    <button class="btn-primary" bindtap="createHabit">创建第一个习惯</button>
+  </view>
+</view>

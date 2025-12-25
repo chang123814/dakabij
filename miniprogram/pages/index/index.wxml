@@ -1,0 +1,84 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="card user-card" wx:if="{{userInfo}}">
+    <view class="user-info">
+      <image class="avatar avatar-lg" src="{{userInfo.avatar_url || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="user-details">
+        <text class="user-name">{{userInfo.nickname || '未设置昵称'}}</text>
+        <text class="user-desc">坚持每一天，记录美好生活</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日概览 -->
+  <view class="card overview-card">
+    <view class="card-title">今日概览</view>
+    <view class="overview-grid">
+      <view class="overview-item" bindtap="goToHabits">
+        <text class="overview-value text-primary">{{todayCheckInCount}}</text>
+        <text class="overview-label">今日打卡</text>
+      </view>
+      <view class="overview-item" bindtap="goToHabits">
+        <text class="overview-value text-primary">{{activeHabits}}</text>
+        <text class="overview-label">进行中习惯</text>
+      </view>
+      <view class="overview-item" bindtap="goToNotes">
+        <text class="overview-value text-primary">{{recentNotes.length}}</text>
+        <text class="overview-label">今日笔记</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="card quick-actions">
+    <view class="card-title">快捷操作</view>
+    <view class="action-grid">
+      <view class="action-item" bindtap="goToHabits">
+        <image class="action-icon" src="/images/icon/habit.png"></image>
+        <text class="action-text">创建习惯</text>
+      </view>
+      <view class="action-item" bindtap="goToNotes">
+        <image class="action-icon" src="/images/icon/note.png"></image>
+        <text class="action-text">写笔记</text>
+      </view>
+      <view class="action-item" bindtap="goToStatistics">
+        <image class="action-icon" src="/images/icon/stats.png"></image>
+        <text class="action-text">查看统计</text>
+      </view>
+      <view class="action-item">
+        <image class="action-icon" src="/images/icon/calendar.png"></image>
+        <text class="action-text">日历视图</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近笔记 -->
+  <view class="card recent-notes">
+    <view class="card-header">
+      <text class="card-title">最近笔记</text>
+      <text class="card-more" bindtap="goToNotes">查看全部</text>
+    </view>
+    <view class="notes-list" wx:if="{{recentNotes.length > 0}}">
+      <view class="note-item" wx:for="{{recentNotes}}" wx:key="id" bindtap="viewNote" data-id="{{item.id}}">
+        <view class="note-content">
+          <text class="note-title">{{item.title}}</text>
+          <text class="note-preview">{{item.content}}</text>
+        </view>
+        <text class="note-time">{{item.created_at}}</text>
+      </view>
+    </view>
+    <view class="empty" wx:else>
+      <text class="empty-icon">📝</text>
+      <text>还没有笔记，开始记录吧</text>
+    </view>
+  </view>
+
+  <!-- 每日一句 -->
+  <view class="card daily-quote">
+    <view class="quote-content">
+      <text class="quote-text">"坚持不是因为看到了希望，而是坚持了才能看到希望。"</text>
+      <text class="quote-author">—— 佚名</text>
+    </view>
+  </view>
+</view>
