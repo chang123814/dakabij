@@ -1,0 +1,65 @@
+<view class="habit-create-page">
+  <view class="form-item">
+    <text class="label">习惯名称</text>
+    <input class="input" value="{{name}}" bindinput="handleNameInput" placeholder="例如：每日发布一条视频" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">习惯描述（可选）</text>
+    <textarea class="textarea" value="{{description}}" bindinput="handleDescriptionInput" placeholder="简单描述这个习惯的目的和内容..." />
+  </view>
+
+  <view class="form-item">
+    <text class="label">任务分类（可选）</text>
+    <picker mode="selector" range="{{categoryNames}}" bindchange="handleCategoryChange">
+      <view class="picker">{{categoryNames[selectedCategoryIndex]}}</view>
+    </picker>
+  </view>
+
+  <view class="form-item">
+    <text class="label">时间段</text>
+    <picker mode="selector" range="{{timeSlotLabels}}" bindchange="handleTimeSlotChange">
+      <view class="picker">{{timeSlotOptions[selectedTimeSlotIndex].label}}</view>
+    </picker>
+  </view>
+
+  <view class="form-item">
+    <text class="label">目标值（每日目标个数，可选）</text>
+    <input class="input" type="number" value="{{targetValue}}" bindinput="handleTargetValueInput" placeholder="例如：1 条视频、3 张壁纸" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">标签（可选）</text>
+    <view class="tags-input">
+      <view class="tag" wx:for="{{tags}}" wx:key="*this">
+        <text>{{item}}</text>
+        <text class="remove" data-value="{{item}}" bindtap="handleRemoveTag">×</text>
+      </view>
+      <input class="tag-input" value="{{tagsInput}}" bindinput="handleTagsInput" confirm-type="done" bindconfirm="handleAddTag" placeholder="输入标签，回车添加，多标签用逗号分隔" />
+    </view>
+
+    <view class="suggested-tags" wx:if="{{availableTags.length}}">
+      <text class="suggested-label">从已有标签中选择：</text>
+      <view class="suggested-list">
+        <view class="suggested-tag {{tags.indexOf(item.name) !== -1 ? 'active' : ''}}"
+              wx:for="{{availableTags}}" wx:key="id"
+              data-value="{{item.name}}"
+              bindtap="handleToggleSuggestedTag">
+          {{item.name}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-item">
+    <text class="label">优先级</text>
+    <radio-group class="priority-group" bindchange="handlePriorityChange">
+      <label class="priority-item" wx:for="{{priorityOptions}}" wx:key="value">
+        <radio value="{{item.value}}" checked="{{item.value === selectedPriority}}" />
+        <text class="priority-label">{{item.label}}</text>
+      </label>
+    </radio-group>
+  </view>
+
+  <button class="submit-btn" bindtap="handleSubmit" loading="{{submitting}}" disabled="{{submitting}}">{{isEdit ? '保存修改' : '创建习惯'}}</button>
+</view>

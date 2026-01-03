@@ -1,0 +1,15 @@
+<view class="note-create-page">
+  <view class="form-card">
+    <view class="form-item">
+      <text class="label">标题</text>
+      <input class="input" value="{{title}}" bindinput="handleTitleInput" placeholder="请输入笔记标题" />
+    </view>
+
+    <view class="form-item">
+      <text class="label">内容</text>
+      <textarea class="textarea" value="{{content}}" bindinput="handleContentInput" placeholder="记录你的想法、灵感..." />
+    </view>
+
+    <button class="submit-btn" bindtap="handleSubmit">保存</button>
+  </view>
+</view>

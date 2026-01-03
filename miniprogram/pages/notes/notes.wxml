@@ -1,47 +1,30 @@
-<!--pages/notes/notes.wxml-->
-<view class="container">
-  <!-- 搜索栏 -->
-  <view class="search-bar">
-    <view class="search-input-wrapper">
-      <text class="search-icon">🔍</text>
-      <input 
-        class="search-input" 
-        placeholder="搜索笔记..." 
-        value="{{keyword}}"
-        bindconfirm="onSearch"
-      />
+<view class="notes-page">
+  <!-- 顶部筛选卡片：搜索 + 新建按钮 -->
+  <view class="notes-filters">
+    <view class="search-bar">
+      <input class="search-input"
+             value="{{keyword}}"
+             bindinput="handleSearchInput"
+             placeholder="搜索笔记，如：创作灵感..." />
+      <button class="search-btn" bindtap="handleSearch">搜索</button>
+    </view>
+
+    <view class="toolbar">
+      <button class="add-note-btn" bindtap="handleAddNote">＋ 新建笔记</button>
     </view>
   </view>
 
-  <!-- 笔记列表 -->
-  <view class="notes-list" wx:if="{{notes.length > 0}}">
-    <view class="note-card" wx:for="{{notes}}" wx:key="id" bindtap="viewNote" data-id="{{item.id}}">
+  <!-- 笔记列表卡片 -->
+  <scroll-view class="note-list" scroll-y="true">
+    <view class="note-item" wx:for="{{notes}}" wx:key="id" bindtap="handleNoteTap" data-id="{{item.id}}">
       <view class="note-header">
         <text class="note-title">{{item.title}}</text>
-        <text class="note-date">{{item.created_at}}</text>
+        <text class="note-time">{{item.createdAtText}}</text>
       </view>
-      <text class="note-content">{{item.content}}</text>
-      <view class="note-footer">
-        <view class="note-tags" wx:if="{{item.tags && item.tags.length > 0}}">
-          <text class="tag" wx:for="{{item.tags}}" wx:key="index" wx:for-item="tag">#{{tag}}</text>
-        </view>
-        <view class="note-actions">
-          <text class="action-icon">❤️</text>
-          <text class="action-count">{{item.like_count || 0}}</text>
-        </view>
-      </view>
+      <text class="note-content">{{item.shortContent}}</text>
     </view>
-  </view>
 
-  <!-- 空状态 -->
-  <view class="empty" wx:else>
-    <text class="empty-icon">📝</text>
-    <text class="empty-text">还没有笔记</text>
-    <button class="btn-primary" bindtap="createNote">写第一篇笔记</button>
-  </view>
-
-  <!-- 悬浮按钮 -->
-  <view class="fab" bindtap="createNote">
-    <text class="fab-icon">+</text>
-  </view>
+    <view wx:if="{{!loading && !notes.length}}" class="empty-text">暂无笔记，点击上方“新建笔记”开始记录吧～</view>
+    <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+  </scroll-view>
 </view>

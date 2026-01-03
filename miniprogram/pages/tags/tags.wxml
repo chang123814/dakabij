@@ -1,0 +1,27 @@
+<view class="tags-page">
+  <view class="header">
+    <text class="title">素材标签</text>
+    <view class="add-btn" bindtap="handleAddTag">
+      ＋ 添加标签
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="info-text">加载中...</view>
+  <view wx:if="{{!loading && !tags.length}}" class="info-text">暂无标签，请先添加</view>
+
+  <view wx:if="{{!loading && tags.length}}" class="tag-list">
+    <view class="tag-item" wx:for="{{tags}}" wx:key="id">
+      <view class="tag-main">
+        <view class="tag-color-dot" style="background-color: {{item.color || '#2E7D32'}}"></view>
+        <text class="tag-name">{{item.name}}</text>
+      </view>
+      <view class="tag-right">
+        <text class="tag-usage">使用 {{item.usageCount || 0}} 次</text>
+        <view class="tag-actions">
+          <button class="edit-btn" size="mini" bindtap="handleEditTag" data-id="{{item.id}}">编辑</button>
+          <button class="delete-btn" size="mini" bindtap="handleDeleteTag" data-id="{{item.id}}">删除</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

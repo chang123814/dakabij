@@ -1,0 +1,52 @@
+<view class="material-detail-page" wx:if="{{material}}">
+  <image class="material-image" src="{{imageLocalPath || material.imageUrl}}" mode="aspectFill" lazy-load="true" />
+
+
+  <view class="material-header">
+    <text class="material-title">{{material.title}}</text>
+    <view class="material-actions">
+      <button class="action-btn" size="mini" bindtap="handleEdit">编辑</button>
+      <button class="action-btn delete" size="mini" bindtap="handleDelete">删除</button>
+    </view>
+  </view>
+
+
+  <view class="material-info">
+    <view class="info-item">
+      <text class="label">类型</text>
+      <text class="value">{{material.materialTypeText}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">来源</text>
+      <text class="value">{{material.source}}</text>
+    </view>
+  </view>
+
+  <view class="material-tags" wx:if="{{material.tags.length}}">
+    <text class="tag" wx:for="{{material.tags}}" wx:key="*this">{{item}}</text>
+  </view>
+
+  <view class="material-content">
+    <text class="content-text">{{material.content}}</text>
+  </view>
+
+  <view class="quick-actions">
+    <button class="quick-btn" size="mini" bindtap="handleCopyContent">复制内容</button>
+    <button class="quick-btn" size="mini" bindtap="handleCreateNoteFromMaterial">生成笔记</button>
+    <button class="quick-btn" size="mini" bindtap="handleToggleTemplate">
+      {{material.isTemplate ? '取消模板' : '存为模板'}}
+    </button>
+  </view>
+
+
+  <view class="material-footer">
+
+    <text class="view-count">查看 {{material.viewCount}} 次</text>
+    <button class="favorite-btn {{material.isFavorite ? 'active' : ''}}" bindtap="handleFavoriteToggle">
+      {{material.isFavorite ? '已收藏' : '收藏'}}
+    </button>
+  </view>
+</view>
+
+<view wx:if="{{!material && !loading}}" class="empty-text">素材不存在或已删除</view>
+<view wx:if="{{loading}}" class="loading-text">加载中...</view>

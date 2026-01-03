@@ -1,0 +1,86 @@
+.trend-page {
+  padding: 24rpx;
+}
+
+.summary-card {
+  padding: 20rpx 24rpx;
+  border-radius: 16rpx;
+  background-color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  margin-bottom: 24rpx;
+}
+
+.summary-title {
+  font-size: 30rpx;
+  color: #333333;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8rpx;
+}
+
+.summary-row .label {
+  font-size: 24rpx;
+  color: #888888;
+}
+
+.summary-row .value {
+  font-size: 24rpx;
+  color: #333333;
+}
+
+.section {
+  margin-top: 16rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.trend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.date {
+  width: 180rpx;
+  font-size: 22rpx;
+  color: #666666;
+}
+
+.bar-wrapper {
+  flex: 1;
+  height: 20rpx;
+  border-radius: 999rpx;
+  background-color: #f0f0f0;
+  margin: 0 16rpx;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 999rpx;
+  background-color: #4CAF50;
+}
+
+.value {
+  width: 60rpx;
+  text-align: right;
+  font-size: 22rpx;
+  color: #333333;
+}
+
+.empty-text {
+  margin-top: 40rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #999999;
+}

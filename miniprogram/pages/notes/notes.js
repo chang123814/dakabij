@@ -1,86 +1,84 @@
-// pages/notes/notes.js
-const app = getApp();
-const request = require('../../utils/request');
-const util = require('../../utils/util');
+const { request } = require('../../utils/request')
+const { getOpenid } = require('../../utils/auth')
 
 Page({
+
   data: {
+    keyword: '',
     notes: [],
-    loading: false,
-    keyword: ''
+    loading: false
   },
 
-  onLoad() {
-    this.loadNotes();
+  onLoad () {
+    this.openid = getOpenid()
+    if (!this.openid) {
+      wx.showToast({ title: '登录中，请稍后重试', icon: 'none' })
+      return
+    }
+    this.fetchNotes()
   },
 
-  onShow() {
-    this.loadNotes();
+  onShow () {
+    this.openid = getOpenid()
+    if (this.openid) {
+      this.fetchNotes()
+    }
   },
 
-  // 加载笔记列表
-  async loadNotes() {
-    this.setData({ loading: true });
-    
+  async fetchNotes () {
+    if (this.data.loading) return
+    this.setData({ loading: true })
+
     try {
-      const res = await request.get('/notes');
-      if (res.code === 200) {
-        this.setData({ notes: res.data.list || [] });
+      const data = {
+        openid: this.openid
       }
-    } catch (error) {
-      console.error('加载笔记列表失败:', error);
-      wx.showToast({
-        title: '加载失败',
-        icon: 'none'
-      });
+      const keyword = this.data.keyword && this.data.keyword.trim()
+      if (keyword) {
+        data.keyword = keyword
+      }
+
+      const res = await request({
+        url: '/notes',
+        method: 'GET',
+        data
+      })
+
+      const list = res.data || []
+      const mapped = list.map(item => ({
+        ...item,
+        shortContent: item.content ? item.content.slice(0, 60) : '',
+        createdAtText: item.createdAt ? item.createdAt.slice(0, 16).replace('T', ' ') : ''
+      }))
+
+      this.setData({ notes: mapped })
+    } catch (e) {
+      console.error('fetchNotes error', e)
+      wx.showToast({ title: '加载失败', icon: 'none' })
     } finally {
-      this.setData({ loading: false });
+      this.setData({ loading: false })
     }
   },
 
-  // 搜索笔记
-  onSearch(e) {
-    const keyword = e.detail.value;
-    this.setData({ keyword });
-    
-    if (keyword.trim()) {
-      this.searchNotes(keyword);
-    } else {
-      this.loadNotes();
-    }
+  handleSearchInput (e) {
+    this.setData({ keyword: e.detail.value })
   },
 
-  // 搜索笔记
-  async searchNotes(keyword) {
-    try {
-      const res = await request.get(`/notes/search?keyword=${encodeURIComponent(keyword)}`);
-      if (res.code === 200) {
-        this.setData({ notes: res.data.list || [] });
-      }
-    } catch (error) {
-      console.error('搜索笔记失败:', error);
-    }
+  handleSearch () {
+    this.fetchNotes()
   },
 
-  // 创建笔记
-  createNote() {
+  handleAddNote () {
     wx.navigateTo({
       url: '/pages/note-create/note-create'
-    });
+    })
   },
 
-  // 查看笔记详情
-  viewNote(e) {
-    const id = e.currentTarget.dataset.id;
+  handleNoteTap (e) {
+    const { id } = e.currentTarget.dataset
     wx.navigateTo({
       url: `/pages/note-detail/note-detail?id=${id}`
-    });
-  },
-
-  // 下拉刷新
-  onPullDownRefresh() {
-    this.loadNotes().then(() => {
-      wx.stopPullDownRefresh();
-    });
+    })
   }
-});
+
+})

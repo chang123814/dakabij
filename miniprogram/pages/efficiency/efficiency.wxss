@@ -1,0 +1,93 @@
+.efficiency-page {
+  padding: 24rpx;
+}
+
+.summary-card {
+  padding: 20rpx 24rpx;
+  border-radius: 16rpx;
+  background-color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  margin-bottom: 24rpx;
+}
+
+.summary-title {
+  font-size: 30rpx;
+  color: #333333;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8rpx;
+}
+
+.summary-row .label {
+  font-size: 24rpx;
+  color: #888888;
+}
+
+.summary-row .value {
+  font-size: 24rpx;
+  color: #333333;
+}
+
+.section {
+  margin-top: 16rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.habit-item {
+  margin-bottom: 16rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 14rpx;
+  background-color: #ffffff;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03);
+}
+
+.habit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.habit-name {
+  font-size: 26rpx;
+  color: #333333;
+}
+
+.habit-checkins {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.habit-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4rpx;
+}
+
+.habit-row .label {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.habit-row .value {
+  font-size: 22rpx;
+  color: #333333;
+}
+
+.empty-text {
+  margin-top: 40rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #999999;
+}

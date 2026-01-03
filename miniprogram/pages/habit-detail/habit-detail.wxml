@@ -1,0 +1,49 @@
+<view class="habit-detail-page" wx:if="{{habit}}">
+  <view class="habit-summary">
+    <text class="habit-name">{{habit.name}}</text>
+    <text class="habit-desc">{{habit.description || '暂无描述'}} </text>
+
+    <view class="habit-meta">
+      <text class="meta-item">时间段：{{habit.timeSlotText || '不限时段'}} </text>
+      <text class="meta-item">目标：{{habit.targetValue || 0}}</text>
+    </view>
+
+    <view class="habit-meta">
+      <text class="meta-item">实际完成：{{habit.actualValue || 0}}</text>
+      <text class="meta-item">达成率：{{habit.achievementRate || 0}}%</text>
+    </view>
+  </view>
+
+  <view class="check-in-form">
+
+    <view class="form-item">
+      <text class="label">完成状态</text>
+      <switch checked="{{completed}}" bindchange="handleStatusChange" />
+    </view>
+
+    <view class="form-item">
+      <text class="label">满意度评分</text>
+      <view class="rating-stars">
+        <text class="star {{item <= satisfactionScore ? 'active' : ''}}"
+              wx:for="{{[1,2,3,4,5]}}"
+              wx:key="*this"
+              data-score="{{item}}"
+              bindtap="handleRating">★</text>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="label">耗时（分钟）</text>
+      <input class="input" type="number" value="{{timeSpent}}" bindinput="handleTimeSpentInput" placeholder="例如：30" />
+    </view>
+
+    <view class="form-item">
+      <text class="label">完成备注</text>
+      <textarea class="textarea" value="{{completionNotes}}" bindinput="handleNotesInput" placeholder="记录一下今天的完成情况、心得体会..." />
+    </view>
+
+    <button class="submit-btn" bindtap="handleSubmit" loading="{{submitting}}" disabled="{{submitting}}">提交打卡</button>
+  </view>
+</view>
+
+<view wx:if="{{!habit}}" class="loading-text">加载中...</view>

@@ -1,51 +1,65 @@
-<!--pages/habits/habits.wxml-->
-<view class="container">
-  <!-- 头部 -->
-  <view class="header">
-    <text class="header-title">我的习惯</text>
-    <view class="header-actions">
-      <text class="header-date">{{currentDate}}</text>
-      <button class="btn-add" bindtap="createHabit" size="mini" type="primary">+ 新建</button>
-    </view>
+<view class="habits-page">
+  <view class="search-bar">
+    <input class="search-input"
+           value="{{keyword}}"
+           bindinput="handleSearchInput"
+           placeholder="搜索习惯，如：每日发视频..." />
+    <button class="search-btn" bindtap="handleSearch">搜索</button>
   </view>
 
-  <!-- 习惯列表 -->
-  <view class="habits-list" wx:if="{{habits.length > 0}}">
-    <view class="habit-item" wx:for="{{habits}}" wx:key="id" bindtap="viewHabit" data-id="{{item.id}}">
-      <view class="habit-icon">
-        <text class="icon">{{item.icon || '🎯'}}</text>
-      </view>
-      <view class="habit-info">
-        <view class="habit-header">
+  <view class="filter-bar">
+    <picker mode="selector" range="{{categoryNames}}" bindchange="handleCategoryChange">
+      <view class="filter-item">{{categoryNames[selectedCategoryIndex]}}</view>
+    </picker>
+
+    <picker mode="selector" range="{{timeSlotLabels}}" bindchange="handleTimeSlotChange">
+      <view class="filter-item">{{timeSlotOptions[selectedTimeSlotIndex].label}}</view>
+    </picker>
+  </view>
+
+  <scroll-view class="tag-filter-bar" scroll-x="true" wx:if="{{availableTags.length}}">
+    <view class="tag-filter-item {{!selectedTag ? 'active' : ''}}"
+          data-value=""
+          bindtap="handleTagFilter">全部标签</view>
+    <view class="tag-filter-item {{selectedTag === item.name ? 'active' : ''}}"
+          wx:for="{{availableTags}}" wx:key="id"
+          data-value="{{item.name}}"
+          bindtap="handleTagFilter">{{item.name}}</view>
+  </scroll-view>
+
+  <view class="habits-toolbar">
+    <button class="edit-categories-btn" bindtap="handleManageTaskCategories">编辑分类</button>
+    <button class="add-habit-btn" bindtap="handleAddHabit">＋ 新建习惯</button>
+  </view>
+
+  <scroll-view class="habit-list" scroll-y="true">
+    <view class="habit-item" wx:for="{{habits}}" wx:key="id" bindtap="handleHabitTap" data-id="{{item.id}}">
+      <view class="habit-header">
+        <view class="habit-header-main">
           <text class="habit-name">{{item.name}}</text>
-          <view class="habit-status" wx:if="{{item.status === 1}}">
-            <text class="status-dot"></text>
-            <text class="status-text">进行中</text>
-          </view>
-          <view class="habit-status" wx:else>
-            <text class="status-dot inactive"></text>
-            <text class="status-text">已暂停</text>
+          <view class="habit-tags">
+            <text class="tag" wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
           </view>
         </view>
-        <text class="habit-desc">{{item.description || '暂无描述'}}</text>
-        <view class="habit-stats">
-          <text class="stat-item">连续 {{item.streak_days || 0}} 天</text>
-          <text class="stat-item">累计 {{item.total_checkins || 0}} 次</text>
+        <view class="habit-actions">
+          <view class="habit-edit-btn" catchtap="handleEditHabit" data-id="{{item.id}}">编辑</view>
+          <view class="habit-delete-btn" catchtap="handleDeleteHabit" data-id="{{item.id}}">删除</view>
         </view>
       </view>
-      <view class="habit-action" catchtap="checkIn" data-id="{{item.id}}">
-        <button class="btn-check-in" size="mini" type="primary" wx:if="{{item.today_checked === false}}">打卡</button>
-        <view class="checked" wx:else>
-          <text class="checked-icon">✓</text>
-        </view>
+
+
+      <view class="habit-progress">
+        <progress percent="{{item.achievementRate}}" stroke-width="6" activeColor="#4CAF50"/>
+        <text class="progress-text">{{item.actualValue}} / {{item.targetValue}}</text>
+      </view>
+
+      <view class="habit-footer">
+        <text class="time-slot">{{item.timeSlotText}}</text>
+        <text class="achievement-rate">达成率 {{item.achievementRate}}%</text>
       </view>
     </view>
-  </view>
 
-  <!-- 空状态 -->
-  <view class="empty" wx:else>
-    <text class="empty-icon">🎯</text>
-    <text class="empty-text">还没有创建习惯</text>
-    <button class="btn-primary" bindtap="createHabit">创建第一个习惯</button>
-  </view>
+    <view wx:if="{{!loading && !habits.length}}" class="empty-text">暂无习惯，点击上方“新建习惯”开始吧～</view>
+    <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+  </scroll-view>
 </view>

@@ -1,0 +1,119 @@
+<view class="materials-page">
+  <view class="filters-wrapper">
+    <view class="search-bar">
+      <input class="search-input"
+             value="{{keyword}}"
+             bindinput="handleSearchInput"
+             placeholder="搜索素材 / 笔记..." />
+      <button class="search-btn" bindtap="handleSearch">搜索</button>
+    </view>
+
+    <scroll-view class="filter-bar" scroll-x="true">
+      <view class="filter-item {{!selectedType ? 'active' : ''}}"
+            data-value=""
+            bindtap="handleTypeFilter">全部</view>
+      <view class="filter-item {{item.value === selectedType ? 'active' : ''}}"
+            wx:for="{{filterTypes}}" wx:key="value"
+            data-value="{{item.value}}"
+            bindtap="handleTypeFilter">{{item.label}}</view>
+    </scroll-view>
+
+    <scroll-view class="tag-filter-bar" scroll-x="true" wx:if="{{availableTags.length}}">
+      <view class="tag-filter-item {{!selectedTag ? 'active' : ''}}"
+            data-value=""
+            bindtap="handleTagFilter">全部标签</view>
+      <view class="tag-filter-item {{selectedTag === item.name ? 'active' : ''}}"
+            wx:for="{{availableTags}}" wx:key="id"
+            data-value="{{item.name}}"
+            bindtap="handleTagFilter">{{item.name}}</view>
+    </scroll-view>
+
+    <view class="materials-toolbar">
+      <view class="toolbar-left">
+        <view class="toolbar-manage-tags-btn" bindtap="handleManageTags">标签管理</view>
+        <view class="toolbar-template-filter {{onlyTemplate ? 'active' : ''}}" bindtap="handleToggleOnlyTemplate">
+          模板库
+        </view>
+        <view class="toolbar-favorite-filter {{onlyFavorite ? 'active' : ''}}" bindtap="handleToggleOnlyFavorite">
+          只看收藏
+        </view>
+      </view>
+      <view class="toolbar-add-btn" bindtap="handleAddMaterial">＋ 添加素材</view>
+    </view>
+  </view>
+
+  <scroll-view class="materials-list" scroll-y="true" enable-flex="true">
+
+    <view class="waterfall-container">
+      <view class="waterfall-column">
+        <view class="material-card"
+              wx:for="{{leftColumnMaterials}}" wx:key="id"
+              data-id="{{item.id}}"
+              bindtap="handleMaterialDetail">
+          <image class="material-image"
+                 src="{{item.imageLocalPath || item.imageUrl}}"
+                 mode="aspectFill"
+                 lazy-load="true"
+                 data-column="left"
+                 data-index="{{index}}"
+                 data-url="{{item.imageUrl}}"
+                 binderror="handleImageError" />
+
+          <view class="material-info">
+            <text class="material-title">{{item.title}}</text>
+            <text class="material-content">{{item.content}}</text>
+            <view class="material-tags">
+              <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+            </view>
+            <view class="material-footer">
+              <text class="material-type">{{item.materialTypeText}}</text>
+              <text class="material-favorite {{item.isFavorite ? 'active' : ''}}"
+                    data-id="{{item.id}}"
+                    data-favorite="{{item.isFavorite}}"
+                    catchtap="true"
+                    bindtap="handleFavorite">♥</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="waterfall-column">
+        <view class="material-card"
+              wx:for="{{rightColumnMaterials}}" wx:key="id"
+              data-id="{{item.id}}"
+              bindtap="handleMaterialDetail">
+          <image class="material-image"
+                 src="{{item.imageLocalPath || item.imageUrl}}"
+                 mode="aspectFill"
+                 lazy-load="true"
+                 data-column="right"
+                 data-index="{{index}}"
+                 data-url="{{item.imageUrl}}"
+                 binderror="handleImageError" />
+
+
+          <view class="material-info">
+            <text class="material-title">{{item.title}}</text>
+            <text class="material-content">{{item.content}}</text>
+            <view class="material-tags">
+              <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+            </view>
+            <view class="material-footer">
+              <text class="material-type">{{item.materialTypeText}}</text>
+              <text class="material-favorite {{item.isFavorite ? 'active' : ''}}"
+                    data-id="{{item.id}}"
+                    data-favorite="{{item.isFavorite}}"
+                    catchtap="true"
+                    bindtap="handleFavorite">♥</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+    <view wx:if="{{!loading && !leftColumnMaterials.length && !rightColumnMaterials.length}}" class="empty-text">暂无素材</view>
+
+    <view wx:if="{{!hasMore}}" class="no-more-text">没有更多了</view>
+  </scroll-view>
+</view>

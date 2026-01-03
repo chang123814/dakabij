@@ -1,150 +1,99 @@
-/* pages/notes/notes.wxss */
+.notes-page {
+  min-height: 100vh;
+  background-color: #f5f6f7;
+  padding-bottom: 140rpx; /* 预留自定义 tabBar 高度 */
+}
+
+/* 顶部筛选卡片 */
+.notes-filters {
+  margin: 16rpx 24rpx 12rpx;
+  padding: 16rpx 16rpx 12rpx;
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+}
 
 .search-bar {
-  padding: 20rpx 30rpx;
-  background: #fff;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.search-input-wrapper {
   display: flex;
   align-items: center;
-  background: #f5f5f5;
-  border-radius: 30rpx;
-  padding: 15rpx 20rpx;
-}
-
-.search-icon {
-  font-size: 32rpx;
-  margin-right: 15rpx;
 }
 
 .search-input {
   flex: 1;
+  height: 72rpx;
+  padding: 0 24rpx;
+  border-radius: 36rpx;
+  background-color: #f5f6f7;
   font-size: 28rpx;
-  color: #333;
 }
 
-.notes-list {
-  padding: 20rpx 30rpx;
+.search-btn {
+  margin-left: 16rpx;
+  padding: 0 32rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  border-radius: 36rpx;
+  background-color: #18c2b8;
+  color: #fff;
+  font-size: 28rpx;
 }
 
-.note-card {
-  background: #fff;
-  border-radius: 16rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16rpx;
+}
+
+.add-note-btn {
+  padding: 0 32rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  border-radius: 32rpx;
+  background-color: #18c2b8;
+  color: #fff;
+  font-size: 26rpx;
+}
+
+/* 笔记列表区域 */
+.note-list {
+  max-height: calc(100vh - 260rpx);
+  padding: 0 24rpx 32rpx;
+}
+
+.note-item {
+  padding: 24rpx;
+  margin-top: 20rpx;
+  border-radius: 20rpx;
+  background-color: #ffffff;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
 }
 
 .note-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15rpx;
+  margin-bottom: 12rpx;
 }
 
 .note-title {
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 600;
   color: #333;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.note-date {
+.note-time {
   font-size: 24rpx;
   color: #999;
-  margin-left: 20rpx;
 }
 
 .note-content {
-  display: block;
   font-size: 28rpx;
   color: #666;
-  line-height: 1.6;
-  margin-bottom: 15rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
 }
 
-.note-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.note-tags {
-  display: flex;
-  gap: 10rpx;
-  flex-wrap: wrap;
-}
-
-.tag {
-  font-size: 24rpx;
-  color: #4CAF50;
-  background: rgba(76, 175, 80, 0.1);
-  padding: 5rpx 15rpx;
-  border-radius: 15rpx;
-}
-
-.note-actions {
-  display: flex;
-  align-items: center;
-}
-
-.action-icon {
-  font-size: 28rpx;
-  margin-right: 5rpx;
-}
-
-.action-count {
-  font-size: 24rpx;
+.empty-text,
+.loading-text {
+  text-align: center;
   color: #999;
-}
-
-.fab {
-  position: fixed;
-  bottom: 100rpx;
-  right: 30rpx;
-  width: 100rpx;
-  height: 100rpx;
-  background: #4CAF50;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4rpx 15rpx rgba(76, 175, 80, 0.4);
-}
-
-.fab-icon {
-  color: #fff;
-  font-size: 60rpx;
-  font-weight: bold;
-}
-
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 100rpx 30rpx;
-}
-
-.empty-icon {
-  font-size: 120rpx;
-  margin-bottom: 20rpx;
-}
-
-.empty-text {
-  font-size: 28rpx;
-  color: #999;
-  margin-bottom: 40rpx;
+  margin-top: 80rpx;
 }

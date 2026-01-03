@@ -1,61 +1,70 @@
 {
   "pages": [
-    "pages/index/index",
     "pages/habits/habits",
+
     "pages/habit-detail/habit-detail",
     "pages/habit-create/habit-create",
     "pages/notes/notes",
     "pages/note-detail/note-detail",
     "pages/note-create/note-create",
     "pages/statistics/statistics",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/materials/materials",
+    "pages/material-detail/material-detail",
+    "pages/material-create/material-create",
+    "pages/material-statistics/material-statistics",
+    "pages/material-categories/material-categories",
+    "pages/tags/tags",
+    "pages/task-categories/task-categories",
+    "pages/achievement-rate/achievement-rate",
+    "pages/efficiency/efficiency",
+    "pages/trend/trend",
+    "pages/compare/compare"
   ],
   "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#4CAF50",
     "navigationBarTitleText": "习惯日记",
-    "navigationBarTextStyle": "white",
-    "backgroundColor": "#f5f5f5"
+    "navigationBarBackgroundColor": "#18c2b8",
+    "backgroundColor": "#f5f6f7",
+    "navigationBarTextStyle": "white"
   },
   "tabBar": {
-    "color": "#999999",
-    "selectedColor": "#4CAF50",
+    "color": "#c0c0c0",             
+    "selectedColor": "#18c2b8",    
     "backgroundColor": "#ffffff",
     "borderStyle": "black",
+
     "list": [
-      {
-        "pagePath": "pages/index/index",
-        "text": "首页",
-        "iconPath": "images/tab/home.png",
-        "selectedIconPath": "images/tab/home-active.png"
-      },
+
+
       {
         "pagePath": "pages/habits/habits",
-        "text": "习惯",
-        "iconPath": "images/tab/habit.png",
-        "selectedIconPath": "images/tab/habit-active.png"
+        "text": "打卡",
+        "iconPath": "images/tab-daka.png",
+        "selectedIconPath": "images/tab-daka-active.png"
       },
       {
-        "pagePath": "pages/notes/notes",
-        "text": "笔记",
-        "iconPath": "images/tab/note.png",
-        "selectedIconPath": "images/tab/note-active.png"
+        "pagePath": "pages/materials/materials",
+        "text": "素材/笔记",
+        "iconPath": "images/tab-materials.png",
+        "selectedIconPath": "images/tab-materials-active.png"
       },
       {
         "pagePath": "pages/statistics/statistics",
         "text": "统计",
-        "iconPath": "images/tab/stats.png",
-        "selectedIconPath": "images/tab/stats-active.png"
+        "iconPath": "images/tab-stats.png",
+        "selectedIconPath": "images/tab-stats-active.png"
       },
       {
         "pagePath": "pages/profile/profile",
         "text": "我的",
-        "iconPath": "images/tab/profile.png",
-        "selectedIconPath": "images/tab/profile-active.png"
+        "iconPath": "images/tab-profile.png",
+        "selectedIconPath": "images/tab-profile-active.png"
       }
+
+
+
     ]
   },
   "style": "v2",
-  "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+  "sitemapLocation": "sitemap.json"
 }

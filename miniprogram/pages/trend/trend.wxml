@@ -1,0 +1,35 @@
+<view class="trend-page">
+  <view class="summary-card" wx:if="{{summary}}">
+    <text class="summary-title">趋势概览（最近 7 天）</text>
+    <view class="summary-row">
+      <text class="label">平均打卡次数</text>
+      <text class="value">{{summary.average}}</text>
+    </view>
+    <view class="summary-row">
+      <text class="label">单日最高</text>
+      <text class="value">{{summary.max}}</text>
+    </view>
+    <view class="summary-row">
+      <text class="label">单日最低</text>
+      <text class="value">{{summary.min}}</text>
+    </view>
+    <view class="summary-row">
+      <text class="label">首末日增长率</text>
+      <text class="value">{{summary.growthRate}}%</text>
+    </view>
+  </view>
+
+  <view wx:if="{{!summary && !loading}}" class="empty-text">暂无趋势数据，先多打几次卡试试～</view>
+  <view wx:if="{{loading}}" class="empty-text">加载中...</view>
+
+  <view class="section" wx:if="{{trend.length}}">
+    <text class="section-title">每日打卡趋势</text>
+    <view class="trend-item" wx:for="{{trend}}" wx:key="date">
+      <text class="date">{{item.date}}</text>
+      <view class="bar-wrapper">
+        <view class="bar" style="width: {{item.barPercent}}%;"></view>
+      </view>
+      <text class="value">{{item.value}}</text>
+    </view>
+  </view>
+</view>

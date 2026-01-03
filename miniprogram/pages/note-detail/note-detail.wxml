@@ -1,0 +1,20 @@
+<view class="note-detail-page" wx:if="{{note}}">
+  <view class="note-card">
+    <view class="note-header">
+      <text class="note-title">{{note.title}}</text>
+      <text class="note-time">{{note.createdAtText}}</text>
+    </view>
+
+    <view class="note-content">
+      <text class="content-text">{{note.content}}</text>
+    </view>
+
+    <view class="note-footer">
+      <button class="action-btn" bindtap="handleEdit">编辑</button>
+      <button class="action-btn delete" bindtap="handleDelete">删除</button>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{!note && !loading}}" class="empty-text">笔记不存在或已被删除</view>
+<view wx:if="{{loading}}" class="empty-text">加载中...</view>

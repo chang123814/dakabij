@@ -1,0 +1,21 @@
+<view class="task-categories-page">
+  <view class="header">
+    <text class="title">任务分类</text>
+    <button class="add-btn" bindtap="handleAddCategory">添加分类</button>
+  </view>
+
+  <view class="category-list" wx:if="{{categories.length}}">
+    <view class="category-item" wx:for="{{categories}}" wx:key="id">
+      <view class="category-info">
+        <text class="category-name">{{item.name}}</text>
+      </view>
+      <view class="category-actions">
+        <button class="action-btn edit-btn" size="mini" bindtap="handleEditCategory" data-id="{{item.id}}">编辑</button>
+        <button class="action-btn delete-btn" size="mini" type="warn" bindtap="handleDeleteCategory" data-id="{{item.id}}">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{!categories.length && !loading}}" class="empty-text">暂无分类</view>
+  <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+</view>

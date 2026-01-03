@@ -1,0 +1,76 @@
+.achievement-page {
+  padding: 24rpx;
+}
+
+.summary-card {
+  margin-bottom: 24rpx;
+  padding: 24rpx;
+  border-radius: 20rpx;
+  background-color: #E8F5E9;
+}
+
+.summary-label {
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.summary-value {
+  margin-top: 8rpx;
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #2E7D32;
+}
+
+.summary-detail {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #888888;
+}
+
+.habit-list {
+  margin-top: 16rpx;
+  max-height: calc(100vh - 260rpx);
+}
+
+.habit-item {
+  margin-bottom: 20rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 16rpx;
+  background-color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.habit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.habit-name {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.habit-rate {
+  font-size: 24rpx;
+  color: #4CAF50;
+}
+
+.habit-progress {
+  margin-top: 12rpx;
+}
+
+.progress-text {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #888888;
+  text-align: right;
+}
+
+.empty-text,
+.loading-text {
+  margin-top: 40rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #999999;
+}

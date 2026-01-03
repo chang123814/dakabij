@@ -1,0 +1,113 @@
+<view class="compare-page">
+  <view class="summary-card" wx:if="{{currentPeriod && previousPeriod}}">
+    <text class="summary-title">当前周期 vs 对比周期</text>
+
+    <view class="date-picker-row">
+      <view class="date-group">
+        <text class="date-group-label">当前周期</text>
+        <view class="date-row">
+          <picker mode="date" value="{{startDate}}" bindchange="handleStartDateChange">
+            <view class="date-picker">{{startDate || currentPeriod.start_date}}</view>
+          </picker>
+          <text class="date-separator">至</text>
+          <picker mode="date" value="{{endDate}}" bindchange="handleEndDateChange">
+            <view class="date-picker">{{endDate || currentPeriod.end_date}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="date-group">
+        <text class="date-group-label">对比周期</text>
+        <view class="date-row">
+          <picker mode="date" value="{{compareStartDate}}" bindchange="handleCompareStartDateChange">
+            <view class="date-picker">{{compareStartDate || previousPeriod.start_date}}</view>
+          </picker>
+          <text class="date-separator">至</text>
+          <picker mode="date" value="{{compareEndDate}}" bindchange="handleCompareEndDateChange">
+            <view class="date-picker">{{compareEndDate || previousPeriod.end_date}}</view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <view class="apply-row">
+      <button class="apply-btn" size="mini" bindtap="handleApplyRange" loading="{{loading}}" disabled="{{loading}}">应用时间范围</button>
+    </view>
+
+    <view class="period-row">
+      <view class="period-block current">
+        <text class="period-label">当前</text>
+        <text class="period-date">{{currentPeriod.start_date}} 至 {{currentPeriod.end_date}}</text>
+        <view class="metric-row">
+          <text class="metric-label">总打卡</text>
+          <text class="metric-value">{{currentPeriod.total_check_ins}} 次</text>
+        </view>
+        <view class="metric-row">
+          <text class="metric-label">平均每天</text>
+          <text class="metric-value">{{currentPeriod.average_per_day}} 次/天</text>
+        </view>
+        <view class="metric-row">
+          <text class="metric-label">平均耗时</text>
+          <text class="metric-value">{{currentPeriod.average_time_spent}} 分钟/次</text>
+        </view>
+        <view class="metric-row">
+          <text class="metric-label">平均满意度</text>
+          <text class="metric-value">{{currentPeriod.average_satisfaction}} 分</text>
+        </view>
+      </view>
+
+      <view class="period-block previous">
+        <text class="period-label">对比</text>
+        <text class="period-date">{{previousPeriod.start_date}} 至 {{previousPeriod.end_date}}</text>
+        <view class="metric-row">
+          <text class="metric-label">总打卡</text>
+          <text class="metric-value">{{previousPeriod.total_check_ins}} 次</text>
+        </view>
+        <view class="metric-row">
+          <text class="metric-label">平均每天</text>
+          <text class="metric-value">{{previousPeriod.average_per_day}} 次/天</text>
+        </view>
+        <view class="metric-row">
+          <text class="metric-label">平均耗时</text>
+          <text class="metric-value">{{previousPeriod.average_time_spent}} 分钟/次</text>
+        </view>
+        <view class="metric-row">
+          <text class="metric-label">平均满意度</text>
+          <text class="metric-value">{{previousPeriod.average_satisfaction}} 分</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="growth-section" wx:if="{{growth}}">
+    <text class="section-title">核心指标增长率</text>
+    <view class="growth-row">
+      <text class="growth-label">总打卡</text>
+      <text class="growth-value {{growth.total_check_ins >= 0 ? 'positive' : 'negative'}}">
+        {{growth.total_check_ins >= 0 ? '+' : ''}}{{growth.total_check_ins}}%
+      </text>
+    </view>
+    <view class="growth-row">
+      <text class="growth-label">平均每天</text>
+      <text class="growth-value {{growth.average_per_day >= 0 ? 'positive' : 'negative'}}">
+        {{growth.average_per_day >= 0 ? '+' : ''}}{{growth.average_per_day}}%
+      </text>
+    </view>
+    <view class="growth-row">
+      <text class="growth-label">平均耗时</text>
+      <text class="growth-value {{growth.average_time_spent <= 0 ? 'positive' : 'negative'}}">
+        {{growth.average_time_spent >= 0 ? '+' : ''}}{{growth.average_time_spent}}%
+      </text>
+    </view>
+    <view class="growth-row">
+      <text class="growth-label">平均满意度</text>
+      <text class="growth-value {{growth.average_satisfaction >= 0 ? 'positive' : 'negative'}}">
+        {{growth.average_satisfaction >= 0 ? '+' : ''}}{{growth.average_satisfaction}}%
+      </text>
+    </view>
+  </view>
+
+  <view wx:if="{{!loading && !(currentPeriod && previousPeriod)}}" class="empty-text">暂无对比数据，先多打几次卡试试～</view>
+  <view wx:if="{{loading}}" class="empty-text">加载中...</view>
+</view>
+

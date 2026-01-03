@@ -1,96 +1,57 @@
-// app.js
+const { request, BASE_URL } = require('./utils/request')
+
 App({
   globalData: {
+    // 与 utils/request.js 保持一致，避免接口和上传地址不一致
+    apiBaseUrl: BASE_URL,
     userInfo: null,
-    token: null,
-    openid: null,
-    baseUrl: 'http://129.211.62.76:3001/api'
+    openid: null
   },
 
-  onLaunch() {
-    // 检查登录状态
-    this.checkLoginStatus();
+
+  onLaunch () {
+    console.log('Habit Diary mini-program launched')
+    this.initLogin()
   },
 
-  // 检查登录状态
-  checkLoginStatus() {
-    const token = wx.getStorageSync('token');
-    const openid = wx.getStorageSync('openid');
-    
-    if (token && openid) {
-      this.globalData.token = token;
-      this.globalData.openid = openid;
-      this.getUserInfo();
+  initLogin () {
+    const storedOpenid = wx.getStorageSync('openid')
+    if (storedOpenid) {
+      this.globalData.openid = storedOpenid
+      return
     }
-  },
 
-  // 获取用户信息
-  getUserInfo() {
-    wx.request({
-      url: `${this.globalData.baseUrl}/users/info`,
-      method: 'GET',
-      header: {
-        'Authorization': `Bearer ${this.globalData.token}`
-      },
-      success: (res) => {
-        if (res.data.code === 200) {
-          this.globalData.userInfo = res.data.data;
+    wx.login({
+      success: async (res) => {
+        if (!res.code) {
+          console.warn('wx.login no code', res)
+          wx.showToast({ title: '登录失败，请重试', icon: 'none' })
+          return
         }
-      }
-    });
-  },
 
-  // 微信登录
-  wxLogin() {
-    return new Promise((resolve, reject) => {
-      wx.login({
-        success: (res) => {
-          if (res.code) {
-            wx.request({
-              url: `${this.globalData.baseUrl}/wechat/login`,
-              method: 'POST',
-              data: {
-                code: res.code
-              },
-              success: (loginRes) => {
-                if (loginRes.data.code === 200) {
-                  const { token, openid } = loginRes.data.data;
-                  this.globalData.token = token;
-                  this.globalData.openid = openid;
-                  
-                  // 保存到本地存储
-                  wx.setStorageSync('token', token);
-                  wx.setStorageSync('openid', openid);
-                  
-                  // 获取用户信息
-                  this.getUserInfo();
-                  
-                  resolve(loginRes.data.data);
-                } else {
-                  reject(loginRes.data.message);
-                }
-              },
-              fail: (err) => {
-                reject(err);
-              }
-            });
-          } else {
-            reject('获取微信登录凭证失败');
+        try {
+          const resp = await request({
+            url: '/auth/login',
+            method: 'POST',
+            data: { code: res.code }
+          })
+          const openid = resp?.data?.openid
+          if (!openid) {
+            wx.showToast({ title: '登录异常', icon: 'none' })
+            return
           }
-        },
-        fail: (err) => {
-          reject(err);
+          this.globalData.openid = openid
+          wx.setStorageSync('openid', openid)
+        } catch (e) {
+          console.error('login error', e)
+          wx.showToast({ title: '登录失败', icon: 'none' })
         }
-      });
-    });
-  },
-
-  // 退出登录
-  logout() {
-    this.globalData.userInfo = null;
-    this.globalData.token = null;
-    this.globalData.openid = null;
-    wx.removeStorageSync('token');
-    wx.removeStorageSync('openid');
+      },
+      fail: (err) => {
+        console.error('wx.login failed', err)
+        wx.showToast({ title: '登录失败', icon: 'none' })
+      }
+    })
   }
-});
+})
+

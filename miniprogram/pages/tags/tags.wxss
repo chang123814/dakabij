@@ -1,0 +1,95 @@
+.tags-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 16rpx 24rpx 32rpx;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 64rpx;
+  padding: 0 28rpx;
+  border-radius: 999rpx;
+  background-color: #18c2b8;
+  color: #ffffff;
+  font-size: 26rpx;
+  box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.12);
+}
+
+
+.info-text {
+  text-align: center;
+  font-size: 24rpx;
+  color: #999999;
+  margin-top: 40rpx;
+}
+
+.tag-list {
+  margin-top: 8rpx;
+}
+
+.tag-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  margin-top: 16rpx;
+  border-radius: 20rpx;
+  background-color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.tag-main {
+  display: flex;
+  align-items: center;
+}
+
+.tag-color-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  background-color: #18c2b8;
+  margin-right: 12rpx;
+}
+
+
+.tag-name {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.tag-right {
+  display: flex;
+  align-items: center;
+}
+
+.tag-usage {
+  font-size: 22rpx;
+  color: #999999;
+  margin-right: 16rpx;
+}
+
+.tag-actions button {
+  margin-left: 8rpx;
+  font-size: 22rpx;
+}
+
+.delete-btn {
+  color: #ff4d4f;
+}

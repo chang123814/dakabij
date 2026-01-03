@@ -1,0 +1,64 @@
+<view class="material-create-page">
+  <view class="form-item">
+    <text class="label">素材类型</text>
+    <picker mode="selector" range="{{materialTypes}}" range-key="label" bindchange="handleTypeChange">
+      <view class="picker">{{materialTypes[selectedTypeIndex].label}}</view>
+    </picker>
+  </view>
+
+  <view class="form-item">
+    <text class="label">标题</text>
+    <input class="input" value="{{title}}" bindinput="handleTitleInput" placeholder="请输入标题" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">内容</text>
+    <textarea class="textarea" value="{{content}}" bindinput="handleContentInput" placeholder="请输入内容..." />
+  </view>
+
+  <view class="form-item">
+    <text class="label">图片</text>
+    <view class="image-upload">
+      <button class="upload-btn" bindtap="handleChooseImage">选择图片（可选）</button>
+    </view>
+    <image wx:if="{{previewImageUrl}}"
+           class="preview-image"
+           src="{{previewImageUrl}}"
+           mode="aspectFill"
+           binderror="handlePreviewError" />
+
+
+  </view>
+
+
+  <view class="form-item">
+    <text class="label">标签</text>
+    <view class="tags-input">
+      <view class="tag" wx:for="{{tags}}" wx:key="*this">
+        <text>{{item}}</text>
+        <text class="remove" data-value="{{item}}" bindtap="handleRemoveTag">×</text>
+      </view>
+      <input class="tag-input" value="{{tagsInput}}" bindinput="handleTagsInput" confirm-type="done" bindconfirm="handleAddTag" placeholder="输入标签后回车添加" />
+    </view>
+
+    <view class="suggested-tags" wx:if="{{availableTags.length}}">
+      <text class="suggested-label">从已有标签中选择：</text>
+      <view class="suggested-list">
+        <view class="suggested-tag {{tags.indexOf(item.name) !== -1 ? 'active' : ''}}"
+              wx:for="{{availableTags}}" wx:key="id"
+              data-value="{{item.name}}"
+              bindtap="handleToggleSuggestedTag">
+          {{item.name}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-item">
+    <text class="label">来源</text>
+    <input class="input" value="{{source}}" bindinput="handleSourceInput" placeholder="请输入来源（可选）" />
+  </view>
+
+  <view class="submit-btn" bindtap="handleSubmit">{{isEdit ? '保存修改' : '保存素材'}}</view>
+</view>
+

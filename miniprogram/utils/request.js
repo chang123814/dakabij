@@ -1,155 +1,62 @@
-// utils/request.js - 封装微信小程序网络请求
+// 根据小程序环境自动切换 API 域名
+// develop: 开发版（本地调试）
+// trial:   体验版
+// release: 正式版
 
-const app = getApp();
+const ENV_CONFIG = {
+  // 开发阶段：为了方便真机调试，这里也直接指向线上后端
+  // 如果以后需要本地联调，再把 develop 改回 http://localhost:3000/api 即可
+  develop: 'https://api.qinghanju.cn/api',      // 开发版（含真机调试）：统一走线上服务器
+  trial: 'https://api.qinghanju.cn/api',        // 体验版：腾讯云轻量服务器
+  release: 'https://api.qinghanju.cn/api'       // 正式版：腾讯云轻量服务器
+}
 
-/**
- * 封装wx.request
- * @param {string} url 请求地址
- * @param {object} data 请求数据
- * @param {string} method 请求方法
- * @param {boolean} needLogin 是否需要登录
- */
-function request(url, data = {}, method = 'GET', needLogin = true) {
+
+
+function getBaseUrl () {
+  try {
+    // 微信提供的环境信息：develop / trial / release
+    const info = wx.getAccountInfoSync && wx.getAccountInfoSync()
+    const env = info && info.miniProgram && info.miniProgram.envVersion
+    if (env && ENV_CONFIG[env]) {
+      return ENV_CONFIG[env]
+    }
+    // 找不到时默认用开发环境
+    return ENV_CONFIG.develop
+  } catch (e) {
+    // 老版本基础库不支持 getAccountInfoSync 时兜底
+    return ENV_CONFIG.develop
+  }
+}
+
+const BASE_URL = getBaseUrl()
+
+function request ({ url, method = 'GET', data = {}, header = {} }) {
   return new Promise((resolve, reject) => {
-    // 检查是否需要登录
-    if (needLogin && !app.globalData.token) {
-      // 跳转到登录页
-      wx.navigateTo({
-        url: '/pages/login/login'
-      });
-      reject('请先登录');
-      return;
-    }
-
-    // 构建请求头
-    const header = {
-      'content-type': 'application/json'
-    };
-
-    // 添加token
-    if (app.globalData.token) {
-      header['Authorization'] = `Bearer ${app.globalData.token}`;
-    }
-
-    // 发起请求
     wx.request({
-      url: `${app.globalData.baseUrl}${url}`,
-      method: method,
-      data: data,
-      header: header,
+      url: `${BASE_URL}${url}`,
+      method,
+      data,
+      header: {
+        'Content-Type': 'application/json',
+        ...header
+      },
       success: (res) => {
-        // 处理响应
-        if (res.statusCode === 200) {
-          if (res.data.code === 200) {
-            resolve(res.data);
-          } else if (res.data.code === 401) {
-            // token过期，重新登录
-            app.logout();
-            wx.navigateTo({
-              url: '/pages/login/login'
-            });
-            reject('登录已过期，请重新登录');
-          } else {
-            wx.showToast({
-              title: res.data.message || '请求失败',
-              icon: 'none',
-              duration: 2000
-            });
-            reject(res.data.message || '请求失败');
-          }
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          // 后端统一返回 { status, data, message }，这里直接把 res.data 透出去
+          resolve(res.data)
         } else {
-          wx.showToast({
-            title: '网络错误',
-            icon: 'none',
-            duration: 2000
-          });
-          reject('网络错误');
+          reject(res.data || { message: '请求失败', statusCode: res.statusCode })
         }
       },
       fail: (err) => {
-        wx.showToast({
-          title: '网络连接失败',
-          icon: 'none',
-          duration: 2000
-        });
-        reject(err);
+        reject(err)
       }
-    });
-  });
-}
-
-/**
- * GET请求
- */
-function get(url, data = {}, needLogin = true) {
-  return request(url, data, 'GET', needLogin);
-}
-
-/**
- * POST请求
- */
-function post(url, data = {}, needLogin = true) {
-  return request(url, data, 'POST', needLogin);
-}
-
-/**
- * PUT请求
- */
-function put(url, data = {}, needLogin = true) {
-  return request(url, data, 'PUT', needLogin);
-}
-
-/**
- * DELETE请求
- */
-function del(url, data = {}, needLogin = true) {
-  return request(url, data, 'DELETE', needLogin);
-}
-
-/**
- * 上传文件
- */
-function uploadFile(url, filePath, formData = {}) {
-  return new Promise((resolve, reject) => {
-    const header = {};
-    if (app.globalData.token) {
-      header['Authorization'] = `Bearer ${app.globalData.token}`;
-    }
-
-    wx.uploadFile({
-      url: `${app.globalData.baseUrl}${url}`,
-      filePath: filePath,
-      name: 'file',
-      formData: formData,
-      header: header,
-      success: (res) => {
-        const data = JSON.parse(res.data);
-        if (data.code === 200) {
-          resolve(data);
-        } else {
-          wx.showToast({
-            title: data.message || '上传失败',
-            icon: 'none'
-          });
-          reject(data.message || '上传失败');
-        }
-      },
-      fail: (err) => {
-        wx.showToast({
-          title: '上传失败',
-          icon: 'none'
-        });
-        reject(err);
-      }
-    });
-  });
+    })
+  })
 }
 
 module.exports = {
   request,
-  get,
-  post,
-  put,
-  del,
-  uploadFile
-};
+  BASE_URL
+}

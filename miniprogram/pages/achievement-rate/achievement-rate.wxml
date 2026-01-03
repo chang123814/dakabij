@@ -1,0 +1,24 @@
+<view class="achievement-page">
+  <view class="summary-card">
+    <text class="summary-label">总体达成率</text>
+    <text class="summary-value">{{overallRate}}%</text>
+    <text class="summary-detail">{{completedCount}} / {{totalCount}} 个习惯达标</text>
+  </view>
+
+  <scroll-view class="habit-list" scroll-y="true">
+    <view class="habit-item" wx:for="{{habits}}" wx:key="habit_id">
+      <view class="habit-header">
+        <text class="habit-name">{{item.habit_name}}</text>
+        <text class="habit-rate">{{item.achievementRate}}%</text>
+      </view>
+      <view class="habit-progress">
+        <progress percent="{{item.achievementRate}}" stroke-width="6" activeColor="{{item.progressColor}}" />
+        <text class="progress-text">{{item.actualValue}} / {{item.targetValue}}</text>
+      </view>
+
+    </view>
+
+    <view wx:if="{{!loading && !habits.length}}" class="empty-text">暂无数据，请先去打卡～</view>
+    <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+  </scroll-view>
+</view>

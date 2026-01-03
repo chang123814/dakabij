@@ -1,97 +1,61 @@
-<!--pages/statistics/statistics.wxml-->
-<view class="container">
-  <!-- 总览统计 -->
-  <view class="card stats-overview">
-    <view class="card-title">数据概览</view>
-    <view class="stats-grid">
-      <view class="stat-item">
-        <text class="stat-value text-primary">{{stats.totalHabits}}</text>
-        <text class="stat-label">总习惯数</text>
-      </view>
-      <view class="stat-item">
-        <text class="stat-value text-primary">{{stats.activeHabits}}</text>
-        <text class="stat-label">进行中</text>
-      </view>
-      <view class="stat-item">
-        <text class="stat-value text-primary">{{stats.totalCheckIns}}</text>
-        <text class="stat-label">总打卡次数</text>
-      </view>
-      <view class="stat-item">
-        <text class="stat-value text-primary">{{stats.currentStreak}}</text>
-        <text class="stat-label">当前连续天数</text>
-      </view>
-      <view class="stat-item">
-        <text class="stat-value text-primary">{{stats.longestStreak}}</text>
-        <text class="stat-label">最长连续天数</text>
-      </view>
-      <view class="stat-item">
-        <text class="stat-value text-primary">{{stats.totalNotes}}</text>
-        <text class="stat-label">总笔记数</text>
-      </view>
-    </view>
+<view class="statistics-page">
+  <view class="header">
+    <text class="title">统计概览</text>
+    <text class="subtitle">看看近期打卡表现</text>
   </view>
 
-  <!-- 周统计 -->
-  <view class="card weekly-stats">
-    <view class="card-title">本周打卡</view>
-    <view class="week-chart">
-      <view class="chart-item" wx:for="{{weeklyData}}" wx:key="day">
-        <view class="chart-bar">
-          <view 
-            class="bar-fill" 
-            style="height: {{item.percentage}}%;"
-          ></view>
-        </view>
-        <text class="chart-label">{{item.day}}</text>
-        <text class="chart-value">{{item.count}}</text>
+  <view class="card-list">
+    <view class="stat-card" bindtap="handleNavigateAchievement">
+      <view class="card-left">
+        <text class="card-title">达成率统计</text>
+        <text class="card-desc">查看各个习惯的目标完成情况</text>
+      </view>
+      <view class="card-right">
+        <text class="card-link">进入</text>
       </view>
     </view>
-  </view>
 
-  <!-- 成就 -->
-  <view class="card achievements">
-    <view class="card-title">我的成就</view>
-    <view class="achievement-list">
-      <view class="achievement-item">
-        <text class="achievement-icon">🏆</text>
-        <view class="achievement-info">
-          <text class="achievement-name">初出茅庐</text>
-          <text class="achievement-desc">完成第一个习惯打卡</text>
-        </view>
-        <view class="achievement-status completed">
-          <text class="status-icon">✓</text>
-        </view>
+    <view class="stat-card" bindtap="handleNavigateEfficiency">
+      <view class="card-left">
+        <text class="card-title">效率分析</text>
+        <text class="card-desc">查看平均耗时、满意度和最高效时段</text>
       </view>
-      <view class="achievement-item">
-        <text class="achievement-icon">🔥</text>
-        <view class="achievement-info">
-          <text class="achievement-name">连续7天</text>
-          <text class="achievement-desc">连续打卡7天</text>
-        </view>
-        <view class="achievement-status completed">
-          <text class="status-icon">✓</text>
-        </view>
+      <view class="card-right">
+        <text class="card-link">进入</text>
       </view>
-      <view class="achievement-item">
-        <text class="achievement-icon">⭐</text>
-        <view class="achievement-info">
-          <text class="achievement-name">习惯达人</text>
-          <text class="achievement-desc">创建10个习惯</text>
-        </view>
-        <view class="achievement-status pending">
-          <text class="status-text">未完成</text>
-        </view>
+    </view>
+
+    <view class="stat-card" bindtap="handleNavigateMaterialStatistics">
+      <view class="card-left">
+        <text class="card-title">素材统计</text>
+        <text class="card-desc">查看素材类型分布和高频标签</text>
       </view>
-      <view class="achievement-item">
-        <text class="achievement-icon">💪</text>
-        <view class="achievement-info">
-          <text class="achievement-name">百日坚持</text>
-          <text class="achievement-desc">连续打卡100天</text>
-        </view>
-        <view class="achievement-status pending">
-          <text class="status-text">未完成</text>
-        </view>
+      <view class="card-right">
+        <text class="card-link">进入</text>
+      </view>
+    </view>
+
+    <view class="stat-card" bindtap="handleNavigateCompare">
+      <view class="card-left">
+        <text class="card-title">对比分析</text>
+        <text class="card-desc">对比两个时间区间的打卡表现</text>
+      </view>
+      <view class="card-right">
+        <text class="card-link">进入</text>
+      </view>
+    </view>
+
+    <view class="stat-card" bindtap="handleNavigateTrend">
+      <view class="card-left">
+        <text class="card-title">趋势分析</text>
+        <text class="card-desc">查看最近一段时间的打卡趋势</text>
+      </view>
+      <view class="card-right">
+        <text class="card-link">进入</text>
       </view>
     </view>
   </view>
 </view>
+
+
+

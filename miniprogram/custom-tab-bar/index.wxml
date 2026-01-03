@@ -1,0 +1,25 @@
+<view class="tab-bar">
+  <view class="tab-bar-item" data-index="0" bindtap="onSwitchTab">
+    <image class="tab-icon" src="/images/tab-daka.png" mode="aspectFit" wx:if="{{selected !== 0}}" />
+    <image class="tab-icon" src="/images/tab-daka-active.png" mode="aspectFit" wx:if="{{selected === 0}}" />
+    <text class="tab-text {{selected === 0 ? 'active' : ''}}">打卡</text>
+  </view>
+
+  <view class="tab-bar-item" data-index="1" bindtap="onSwitchTab">
+    <image class="tab-icon" src="/images/tab-materials.png" mode="aspectFit" wx:if="{{selected !== 1}}" />
+    <image class="tab-icon" src="/images/tab-materials-active.png" mode="aspectFit" wx:if="{{selected === 1}}" />
+    <text class="tab-text {{selected === 1 ? 'active' : ''}}">素材/笔记</text>
+  </view>
+
+  <view class="tab-bar-item" data-index="2" bindtap="onSwitchTab">
+    <image class="tab-icon" src="/images/tab-stats.png" mode="aspectFit" wx:if="{{selected !== 2}}" />
+    <image class="tab-icon" src="/images/tab-stats-active.png" mode="aspectFit" wx:if="{{selected === 2}}" />
+    <text class="tab-text {{selected === 2 ? 'active' : ''}}">统计</text>
+  </view>
+
+  <view class="tab-bar-item" data-index="3" bindtap="onSwitchTab">
+    <image class="tab-icon" src="/images/tab-profile.png" mode="aspectFit" wx:if="{{selected !== 3}}" />
+    <image class="tab-icon" src="/images/tab-profile-active.png" mode="aspectFit" wx:if="{{selected === 3}}" />
+    <text class="tab-text {{selected === 3 ? 'active' : ''}}">我的</text>
+  </view>
+</view>

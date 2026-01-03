@@ -1,0 +1,85 @@
+.task-categories-page {
+  padding: 24rpx;
+  background-color: #E8F5E9;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.title {
+  font-size: 32rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+.add-btn {
+  height: 64rpx;
+  line-height: 64rpx;
+  padding: 0 24rpx;
+  border-radius: 999rpx;
+  background-color: #18c2b8;
+  color: #ffffff;
+  font-size: 26rpx;
+}
+
+
+.category-list {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.category-item:last-child {
+  border-bottom: none;
+}
+
+.category-name {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.category-actions {
+  display: flex;
+  align-items: center;
+}
+
+.category-actions .action-btn {
+  margin-left: 12rpx;
+  min-width: 120rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  padding: 0 24rpx;
+  font-size: 24rpx;
+  border-radius: 999rpx;
+}
+
+.category-actions .edit-btn {
+  background-color: #ffffff;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.category-actions .delete-btn {
+  background-color: #ffecec;
+  color: var(--secondary-color);
+  border: 1px solid var(--secondary-color);
+}
+
+.empty-text,
+.loading-text {
+  margin-top: 80rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #999999;
+}

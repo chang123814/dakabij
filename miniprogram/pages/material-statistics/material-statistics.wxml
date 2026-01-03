@@ -1,0 +1,57 @@
+<view class="material-statistics-page">
+  <view class="summary-card" wx:if="{{summary}}">
+    <text class="summary-title">素材概览</text>
+    <view class="summary-row">
+      <text class="label">素材总数</text>
+      <text class="value">{{summary.totalCount}} 个</text>
+    </view>
+    <view class="summary-row">
+      <text class="label">收藏素材</text>
+      <text class="value">{{summary.favoriteCount}} 个</text>
+    </view>
+    <view class="summary-row">
+      <text class="label">含图片素材</text>
+      <text class="value">{{summary.imageCount}} 个</text>
+    </view>
+  </view>
+
+  <view wx:if="{{!summary && !loading}}" class="empty-text">暂无素材数据，先去收集一些素材吧～</view>
+  <view wx:if="{{loading}}" class="empty-text">加载中...</view>
+
+  <view class="section" wx:if="{{typeDistribution.length}}">
+    <text class="section-title">按类型统计</text>
+    <view class="type-item" wx:for="{{typeDistribution}}" wx:key="material_type">
+      <view class="type-row">
+        <text class="type-label">{{item.label}}</text>
+        <text class="type-value">{{item.count}} 个</text>
+      </view>
+      <view class="type-bar-wrapper">
+        <view class="type-bar" style="width: {{item.barPercent}}%;"></view>
+      </view>
+
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{topTags.length}}">
+    <text class="section-title">高频标签 TOP10</text>
+    <view class="tag-item" wx:for="{{topTags}}" wx:key="tag" data-tag="{{item.tag}}" bindtap="handleTagTap">
+      <view class="tag-row">
+        <text class="tag-name">{{item.tag}}</text>
+        <text class="tag-count">{{item.count}} 次</text>
+      </view>
+    </view>
+
+  </view>
+
+  <view class="section" wx:if="{{recentMaterials.length}}">
+    <text class="section-title">最近使用的素材</text>
+    <view class="material-item" wx:for="{{recentMaterials}}" wx:key="id" data-id="{{item.id}}" bindtap="handleRecentMaterialTap">
+      <view class="material-title-row">
+        <text class="material-title">{{item.title}}</text>
+        <text class="material-type">{{mapMaterialTypeText(item.material_type)}}{{item.is_favorite ? ' · 已收藏' : ''}}</text>
+      </view>
+      <text class="material-time">最近更新：{{item.updated_at}}</text>
+    </view>
+
+  </view>
+</view>
